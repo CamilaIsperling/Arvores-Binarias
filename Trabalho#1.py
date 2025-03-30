@@ -211,12 +211,61 @@ class BinarySearchTree(BinarySearchTreeADT):
                 if current.right: queue.append(current.right)
 
     def count_internal(self) -> int:
-        def count_internal(current: Node) -> int:
-            if current is None:
+        def count(current: Node) -> int:
+            if current is None or (current.left is None and current.right is None):
                 return 0
-            if current.left or current.right:
-                return 1 + count_internal(current.left) + count_internal(current.right)
-            return 0
+            return 1 + count(current.left) + count(current.right)
         
-        return count_internal(self._root)
+        return count(self._root)
+
+    def degree(self, key: object) -> int:
+        parent_node, node = self._get_parent(key)
+        if node is None:
+            return -1
+        
+        degree = 0
+
+        if node.left:
+            degree += 1
+        if node.right:
+            degree += 1
+        return degree
+    
+    def height(self, key: object) -> int:
+        _, node = self._get_parent(key)
+        if node is None:
+            return -1
+        
+        def get_height(current: Node) -> int:
+            if current is None:
+                return -1
+            return 1 + max(get_height(current.left), get_height(current.right))
+        
+        return get_height(node)
+    
+    def level(self, key: object) -> int:
+        current = self._root
+        level = 0
+        while current:
+            if key == current.key:
+                return level
+            current = current.next(key)
+            level += 1
+        return -1
+
+    def descendent(self, key: object) -> str:
+        _, node = self._get_parent(key)
+        if node is None:
+            return None
+        
+        result = []
+        def collect_descendants(current: Node):
+            if current:
+                result.append(str(current.key))
+                collect_descendants(current.left)
+                collect_descendants(current.right)
+        
+        collect_descendants(node.left)
+        collect_descendants(node.right)
+        return ' '.join(result)
     
