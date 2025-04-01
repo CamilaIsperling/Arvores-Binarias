@@ -1,3 +1,6 @@
+## Grupo: 2
+## Integrantes: Camila Isperling, Gustavo de Lima Coitinho e Júlia Stelzer
+
 ## Bibliotecas
 from __future__ import annotations
 from abc import ABC, abstractmethod
@@ -9,11 +12,11 @@ class Node:
         self.left = None
         self.right = None
 
-        def __str__(self) -> str:
-            return str(self.key)
-        
-        def next(self, other_key: object) -> Node:
-            return self.left if other_key < self.key else self.right
+    def __str__(self) -> str:
+        return str(self.key)
+
+    def next(self, other_key: object) -> Node:
+        return self.left if other_key < self.key else self.right
         
 class BinarySearchTreeADT(ABC):
     @abstractmethod
@@ -216,10 +219,10 @@ class BinarySearchTree(BinarySearchTreeADT):
                 return 0
             return 1 + count(current.left) + count(current.right)
         
-        return count(self._root)
+        return count(self._root) - 1
 
     def degree(self, key: object) -> int:
-        parent_node, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return -1
         
@@ -232,7 +235,7 @@ class BinarySearchTree(BinarySearchTreeADT):
         return degree
     
     def height(self, key: object) -> int:
-        _, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return -1
         
@@ -254,18 +257,19 @@ class BinarySearchTree(BinarySearchTreeADT):
         return -1
 
     def descendent(self, key: object) -> str:
-        _, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return None
         
         result = []
-        def collect_descendants(current: Node):
+
+        def descendents(current: Node):
             if current:
                 result.append(str(current.key))
-                collect_descendants(current.left)
-                collect_descendants(current.right)
+                descendents(current.left)
+                descendents(current.right)
         
-        collect_descendants(node.left)
-        collect_descendants(node.right)
+        result.append(str(node.key))
+        descendents(node.left)
+        descendents(node.right)
         return ' '.join(result)
-    
