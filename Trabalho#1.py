@@ -52,18 +52,18 @@ class BinarySearchTreeADT(ABC):
 
 class BinarySearchTree(BinarySearchTreeADT):
     def __init__(self) -> None:
-        self.root = None
+        self._root = None
         self.aux_list = []
 
     def clear(self) -> None:
-        self.root = None
+        self._root = None
         
     def is_empty(self) -> bool:
-        return self.root is None
+        return self._root is None
     
     def _get_parent(self, key: object) -> Node:
         parent: Node = None
-        current: Node = self.root
+        current: Node = self._root
         while current and key != current.key:
             parent = current
             current = current.next(key)
@@ -214,12 +214,22 @@ class BinarySearchTree(BinarySearchTreeADT):
                 if current.right: queue.append(current.right)
 
     def count_internal(self) -> int:
-        def count(current: Node) -> int:
-            if current is None or (current.left is None and current.right is None):
+        def count_internal(node: Node) -> int:
+            if node is None or (node.left is None and node.right is None):
                 return 0
-            return 1 + count(current.left) + count(current.right)
-        
-        return count(self._root) - 1
+            
+            left_count = count_internal(node.left)
+            right_count = count_internal(node.right)
+
+            return 1 + left_count + right_count
+
+        if self._root is None or (self._root.left is None and self._root.right is None):
+            return 0
+
+        left_subtree_count = count_internal(self._root.left)
+        right_subtree_count = count_internal(self._root.right)
+
+        return left_subtree_count + right_subtree_count
 
     def degree(self, key: object) -> int:
         parentNode, node = self._get_parent(key)
