@@ -50,18 +50,18 @@ class BinarySearchTreeADT(ABC):
 
 class BinarySearchTree(BinarySearchTreeADT):
     def __init__(self) -> None:
-        self.root = None
+        self._root = None
         self.aux_list = []
 
     def clear(self) -> None:
-        self.root = None
+        self._root = None
         
     def is_empty(self) -> bool:
-        return self.root is None
+        return self._root is None
     
     def _get_parent(self, key: object) -> Node:
         parent: Node = None
-        current: Node = self.root
+        current: Node = self._root
         while current and key != current.key:
             parent = current
             current = current.next(key)
@@ -76,7 +76,7 @@ class BinarySearchTree(BinarySearchTreeADT):
                 return current.value
             return search(current.next(key), key)
         
-        return search(self.root, key)
+        return search(self._root, key)
     
     def insert(self, key: object, value: object) -> None:
         def insert(current: Node, key: object, value: object) -> Node:
@@ -88,14 +88,14 @@ class BinarySearchTree(BinarySearchTreeADT):
                 current.left = insert(current.left, key, value)
             return current
         
-        self.root = insert(self.root, key, value)
+        self._root = insert(self._root, key, value)
 
     def __str__(self) -> str:
         return '[empty]' if self.is_empty() else self._str_tree()
 
     def _str_tree(self) -> str:
 
-        if self.root is None:
+        if self._root is None:
             return "[empty]"
         
         def _str_tree(current: Node, is_right: bool, tree: str, ident: str) -> str:
@@ -107,11 +107,11 @@ class BinarySearchTree(BinarySearchTreeADT):
             return tree
 
         tree: str = ''
-        if self.root.right:
-            tree = _str_tree(self.root.right, True, tree, '')
-        tree += str(self.root) + '\n'
-        if self.root.left:
-            tree = _str_tree(self.root.left, False, tree, '')
+        if self._root.right:
+            tree = _str_tree(self._root.right, True, tree, '')
+        tree += str(self._root) + '\n'
+        if self._root.left:
+            tree = _str_tree(self._root.left, False, tree, '')
         return tree
 
     def _delete_by_copying(self, key: object) -> bool:
@@ -133,8 +133,8 @@ class BinarySearchTree(BinarySearchTreeADT):
         # Case 1/2: O nó tem um ou nenhum filho
         else:
             next_node: Node = current.left or current.right
-            if current == self.root:
-                self.root = next_node
+            if current == self._root:
+                self._root = next_node
             elif current == parent.left:
                 parent.left = next_node
             else:
@@ -160,8 +160,8 @@ class BinarySearchTree(BinarySearchTreeADT):
                 at_the_right = at_the_right.right
             at_the_right.right = current.right
 
-            if current == self.root:
-                self.root = current.left
+            if current == self._root:
+                self._root = current.left
             elif parent.left == current:
                 parent.left = current.left
             else:
@@ -170,8 +170,8 @@ class BinarySearchTree(BinarySearchTreeADT):
         # Case 1/2: O nó tem um ou nenhum filho
         else:
             next_node: Node = current.left or current.right
-            if current == self.root:
-                self.root = next_node
+            if current == self._root:
+                self._root = next_node
             elif current == parent.left:
                 parent.left = next_node
             else:
@@ -188,7 +188,7 @@ class BinarySearchTree(BinarySearchTreeADT):
                 print(current.key, end=' ')
                 pre_order_traversal(current.left)
                 pre_order_traversal(current.right)
-        pre_order_traversal(self.root)
+        pre_order_traversal(self._root)
 
     def in_order_traversal(self) -> None:
         def in_order_traversal(current: Node) -> None:
@@ -196,7 +196,7 @@ class BinarySearchTree(BinarySearchTreeADT):
                 in_order_traversal(current.left)
                 print(current.key, end=' ')
                 in_order_traversal(current.right)
-        in_order_traversal(self.root)
+        in_order_traversal(self._root)
 
     def post_order_traversal(self) -> None:
         def post_order_traversal(current: Node) -> None:
@@ -204,11 +204,11 @@ class BinarySearchTree(BinarySearchTreeADT):
                 post_order_traversal(current.left)
                 post_order_traversal(current.right)
                 print(current.key, end=' ')
-        post_order_traversal(self.root)
+        post_order_traversal(self._root)
 
     def level_order_traversal(self) -> None:
-        if self.root:
-            queue = [self.root]
+        if self._root:
+            queue = [self._root]
             while queue:
                 current: Node = queue.pop(0)
                 print(current.key, end=' ')
@@ -221,7 +221,7 @@ class BinarySearchTree(BinarySearchTreeADT):
                 return 0
             return 1 + count(current.left) + count(current.right)
         
-        return count(self.root)
+        return count(self._root)
 
     def degree(self, key: object) -> int:
         parent_node, node = self._get_parent(key)
@@ -249,7 +249,7 @@ class BinarySearchTree(BinarySearchTreeADT):
         return get_height(node)
     
     def level(self, key: object) -> int:
-        current = self.root
+        current = self._root
         level = 0
         while current:
             if key == current.key:
