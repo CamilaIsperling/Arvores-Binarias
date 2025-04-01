@@ -1,3 +1,6 @@
+## Grupo: 2
+## Integrantes: Camila Isperling, Gustavo de Lima Coitinho e Júlia Stelzer
+
 ## Bibliotecas
 from __future__ import annotations
 from abc import ABC, abstractmethod
@@ -14,7 +17,6 @@ class Node:
 
     def next(self, other_key: object) -> Node:
         return self.left if other_key < self.key else self.right
-
         
 class BinarySearchTreeADT(ABC):
     @abstractmethod
@@ -94,10 +96,6 @@ class BinarySearchTree(BinarySearchTreeADT):
         return '[empty]' if self.is_empty() else self._str_tree()
 
     def _str_tree(self) -> str:
-
-        if self._root is None:
-            return "[empty]"
-        
         def _str_tree(current: Node, is_right: bool, tree: str, ident: str) -> str:
             if current.right:
                 tree = _str_tree(current.right, True, tree, ident + (' ' * 8 if is_right else ' |' + ' ' * 6))
@@ -221,10 +219,10 @@ class BinarySearchTree(BinarySearchTreeADT):
                 return 0
             return 1 + count(current.left) + count(current.right)
         
-        return count(self._root)
+        return count(self._root) - 1
 
     def degree(self, key: object) -> int:
-        parent_node, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return -1
         
@@ -237,7 +235,7 @@ class BinarySearchTree(BinarySearchTreeADT):
         return degree
     
     def height(self, key: object) -> int:
-        _, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return -1
         
@@ -259,23 +257,24 @@ class BinarySearchTree(BinarySearchTreeADT):
         return -1
 
     def descendent(self, key: object) -> str:
-        _, node = self._get_parent(key)
+        parentNode, node = self._get_parent(key)
         if node is None:
             return None
         
         result = []
-        def collect_descendants(current: Node):
+
+        def descendents(current: Node):
             if current:
                 result.append(str(current.key))
-                collect_descendants(current.left)
-                collect_descendants(current.right)
+                descendents(current.left)
+                descendents(current.right)
         
-        collect_descendants(node.left)
-        collect_descendants(node.right)
+        result.append(str(node.key))
+        descendents(node.left)
+        descendents(node.right)
         return ' '.join(result)
     
-
-# Criando uma árvore binária de pesquisa
+# Criando a árvore binária de pesquisa
 bst = BinarySearchTree()
 
 # Inserindo elementos (chave, valor)
@@ -287,7 +286,12 @@ bst.insert(40, "Quarenta")
 bst.insert(60, "Sessenta")
 bst.insert(80, "Oitenta")
 
-print("Pré-Ordem:")
+# Exibindo a árvore
+print("Árvore antes de qualquer operação:")
+print(bst)
+
+# Travessias
+print("\nPré-Ordem:")
 bst.pre_order_traversal()  # Saída esperada: 50 30 20 40 70 60 80
 
 print("\nEm Ordem:")
@@ -299,70 +303,29 @@ bst.post_order_traversal() # Saída esperada: 20 40 30 60 80 70 50
 print("\nNível por Nível:")
 bst.level_order_traversal() # Saída esperada: 50 30 70 20 40 60 80
 
+# Buscar por um nó
 print("\nBusca pelo nó 40:", bst.search(40))  # Esperado: "Quarenta"
 print("Busca pelo nó 100:", bst.search(100))  # Esperado: None (não existe)
 
+# Deletando um nó
 print("\nRemovendo o nó 30...")
 bst.delete(30)
 
 print("\nEm Ordem após a remoção:")
 bst.in_order_traversal()  # Agora deve imprimir: 20 40 50 60 70 80
 
+# Buscando o grau e a altura de um nó
 print("\nAltura do nó 50:", bst.height(50))  # Calcula a altura a partir do nó 50
 print("Nível do nó 60:", bst.level(60))    # Retorna o nível do nó 60
 print("Grau do nó 50:", bst.degree(50))    # Quantos filhos tem o nó 50
-print("Descendentes do nó 70:", bst.descendent(70))  # Mostra descendentes de 70
-print("Quantidade de nós internos:", bst.count_internal())  # Conta nós internos
-print(f'Árvore:\n{bst._str_tree()}')
 
-bst.clear()
+# Descendentes de um nó
+print("\nDescendentes do nó 70:", bst.descendent(70))  # Mostra descendentes de 70
 
+# Contando nós internos
+print("\nQuantidade de nós internos:", bst.count_internal())  # Conta nós internos
 
-# teste 2
-print('\n Teste 2 \n')
-
-bst.insert(1, "Um")
-bst.insert(4, "Quatro")
-bst.insert(5, "Cinco")
-bst.insert(6, "Seis")
-bst.insert(7, "Sete")
-bst.insert(2, "Dois")
-bst.insert(3, "Tres")
-
-print(f'Árvore 2:\n{bst._str_tree()}')
-
-print("\nPré-Ordem:")
-bst.pre_order_traversal()
-
-print("\nEm Ordem:")
-bst.in_order_traversal()
-
-print("\nPós-Ordem:")
-bst.post_order_traversal()
-
-print("\nNível por Nível:")
-bst.level_order_traversal()
-
-print("\nBusca pelo nó 4:", bst.search(4))
-print("Busca pelo nó 1:", bst.search(1))
-
-print("\nRemovendo o nó 5...")
-bst.delete(5)
-
-print("\nEm Ordem após a remoção:")
-bst.in_order_traversal()
-
-print("\nAltura do nó 7:", bst.height(7))
-print("Nível do nó 6:", bst.level(6))
-print("Grau do nó 3:", bst.degree(3))
-
-print("\nDescendentes do nó 5:", bst.descendent(5))
-
-print("\nQuantidade de nós internos:", bst.count_internal())
-
+# Limpar a árvore
 bst.clear()
 print("\nÁrvore após o clear:")
-print(bst)
-
-
-
+print(bst)  # Esperado: [empty]
